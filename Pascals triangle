@@ -1,0 +1,30 @@
+#include <iostream>
+using namespace std;
+
+// Function to display Pascal's Triangle up to power n
+void pasTriang(int n) {
+    for(int i=0; i<=n; i++) {
+        int value=1; // First element of each row
+
+        // Print spaces for formatting (triangle shape)
+        for(int space=0; space<n-i; space++) {
+            cout<< " ";
+        }
+
+        // Print values in the row
+        for(int j=0; j<=i; j++) {
+            cout<<value<<" ";
+            value=value*(i-j)/(j+1);
+        }
+        cout<<endl;
+    }
+}
+
+int main() {
+    int n;
+    cout<<"Enter value of n: ";
+    cin>>n;
+    pasTriang(n);
+
+    return 0;
+}
