@@ -1,0 +1,273 @@
+#include <iostream>
+using namespace std;
+
+struct Node
+{
+    int data;
+    Node *left, *right;
+
+    Node(int value)
+    {
+        data = value;
+        left = right = NULL;
+    }
+};
+
+Node* insert(Node* root, int key)
+{
+    if(root == NULL)
+        return new Node(key);
+
+    if(key < root->data)
+        root->left = insert(root->left, key);
+    else if(key > root->data)
+        root->right = insert(root->right, key);
+
+    return root;
+}
+
+void inorder(Node* root)
+{
+    if(root)
+    {
+        inorder(root->left);
+        cout << root->data << " ";
+        inorder(root->right);
+    }
+}
+
+void preorder(Node* root)
+{
+    if(root)
+    {
+        cout << root->data << " ";
+        preorder(root->left);
+        preorder(root->right);
+    }
+}
+
+void postorder(Node* root)
+{
+    if(root)
+    {
+        postorder(root->left);
+        postorder(root->right);
+        cout << root->data << " ";
+    }
+}
+
+Node* search(Node* root, int key)
+{
+    if(root == NULL || root->data == key)
+        return root;
+
+    if(key < root->data)
+        return search(root->left, key);
+
+    return search(root->right, key);
+}
+
+Node* findMin(Node* root)
+{
+    while(root && root->left != NULL)
+        root = root->left;
+
+    return root;
+}
+
+Node* findMax(Node* root)
+{
+    while(root && root->right != NULL)
+        root = root->right;
+
+    return root;
+}
+
+Node* deleteNode(Node* root, int key)
+{
+    if(root == NULL)
+        return root;
+
+    if(key < root->data)
+        root->left = deleteNode(root->left, key);
+
+    else if(key > root->data)
+        root->right = deleteNode(root->right, key);
+
+    else
+    {
+        if(root->left == NULL)
+        {
+            Node* temp = root->right;
+            delete root;
+            return temp;
+        }
+
+        if(root->right == NULL)
+        {
+            Node* temp = root->left;
+            delete root;
+            return temp;
+        }
+
+        Node* temp = findMin(root->right);
+        root->data = temp->data;
+        root->right = deleteNode(root->right, temp->data);
+    }
+
+    return root;
+}
+
+Node* mergeTrees(Node* t1, Node* t2)
+{
+    if(t1 == NULL)
+        return t2;
+
+    if(t2 == NULL)
+        return t1;
+
+    Node* merged = new Node(t1->data + t2->data);
+
+    merged->left = mergeTrees(t1->left, t2->left);
+    merged->right = mergeTrees(t1->right, t2->right);
+
+    return merged;
+}
+
+int main()
+{
+    Node* root = NULL;
+
+    int n, value;
+
+    cout << "Enter number of nodes for BST: ";
+    cin >> n;
+
+    for(int i = 1; i <= n; i++)
+    {
+        cout << "Enter node " << i << ": ";
+        cin >> value;
+        root = insert(root, value);
+    }
+
+    int choice, key;
+
+    do
+    {
+        cout << "\n\n===== MENU =====\n";
+        cout << "1. Inorder Traversal\n";
+        cout << "2. Preorder Traversal\n";
+        cout << "3. Postorder Traversal\n";
+        cout << "4. Merge Two Binary Trees\n";
+        cout << "5. Search Key\n";
+        cout << "6. Insert Node\n";
+        cout << "7. Find Maximum Key\n";
+        cout << "8. Find Minimum Key\n";
+        cout << "9. Delete Node\n";
+        cout << "10. Exit\n";
+        cout << "Enter Choice: ";
+        cin >> choice;
+
+        switch(choice)
+        {
+            case 1:
+                cout << "Inorder Traversal: ";
+                inorder(root);
+                cout << endl;
+                break;
+
+            case 2:
+                cout << "Preorder Traversal: ";
+                preorder(root);
+                cout << endl;
+                break;
+
+            case 3:
+                cout << "Postorder Traversal: ";
+                postorder(root);
+                cout << endl;
+                break;
+
+            case 4:
+            {
+                Node *tree1 = NULL, *tree2 = NULL;
+                int n1, n2;
+
+                cout << "Enter number of nodes for Tree 1: ";
+                cin >> n1;
+
+                for(int i = 1; i <= n1; i++)
+                {
+                    cout << "Enter node " << i << ": ";
+                    cin >> value;
+                    tree1 = insert(tree1, value);
+                }
+
+                cout << "Enter number of nodes for Tree 2: ";
+                cin >> n2;
+
+                for(int i = 1; i <= n2; i++)
+                {
+                    cout << "Enter node " << i << ": ";
+                    cin >> value;
+                    tree2 = insert(tree2, value);
+                }
+
+                Node* merged = mergeTrees(tree1, tree2);
+
+                cout << "Merged Tree (Inorder): ";
+                inorder(merged);
+                cout << endl;
+                break;
+            }
+
+            case 5:
+                cout << "Enter key to search: ";
+                cin >> key;
+
+                if(search(root, key))
+                    cout << "Key Found\n";
+                else
+                    cout << "Key Not Found\n";
+                break;
+
+            case 6:
+                cout << "Enter value to insert: ";
+                cin >> key;
+
+                root = insert(root, key);
+
+                cout << "Node Inserted Successfully\n";
+                break;
+
+            case 7:
+                cout << "Maximum Key = "
+                     << findMax(root)->data << endl;
+                break;
+
+            case 8:
+                cout << "Minimum Key = "
+                     << findMin(root)->data << endl;
+                break;
+
+            case 9:
+                cout << "Enter value to delete: ";
+                cin >> key;
+
+                root = deleteNode(root, key);
+
+                cout << "Node Deleted Successfully\n";
+                break;
+
+            case 10:
+                cout << "Program Ended.\n";
+                break;
+
+            default:
+                cout << "Invalid Choice!\n";
+        }
+
+    } while(choice != 10);
+
+    return 0;
+}
